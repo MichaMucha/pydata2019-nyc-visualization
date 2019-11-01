@@ -10,7 +10,35 @@ pd.plotting.output_notebook()
 from bokeh.models.formatters import NumeralTickFormatter, PrintfTickFormatter
 from bokeh.plotting import show
 
-def outcomes_chart(df):
+import altair as alt
+alt.renderers.enable('kaggle')
+
+def altair_format(df):
+    """Wide-format to narrow-format"""
+    return (
+        df.reset_index()
+        .melt('index', var_name='Factor', value_name='Amount')
+        .rename(columns={'index':'Year'})
+    )
+
+def altair_outcomes_chart(df):
+    return alt.Chart(df).mark_line(size=7, point=True).encode(
+        x='Year:T',
+        y='Amount:Q',
+        color='Factor:N', 
+        tooltip=['Year:T', 'Factor:N', alt.Tooltip('Amount:Q', format='$,.2f')]
+    ).interactive()
+
+def altair_wealth_chart(df):
+    df = df.query('Factor == "wealth"')
+    return alt.Chart(df).mark_area(opacity=0.4).encode(
+        x='Year:T',
+        y=alt.Y('Amount:Q', stack=None),
+        color='Factor:N',
+        tooltip=['Year:T', alt.Tooltip('Amount:Q', format='$,.2f')]
+    ).interactive()
+
+def bokeh_outcomes_chart(df):
     p = df.plot(kind='line', 
                 show_figure=False,
                 toolbar_location=None,
@@ -29,7 +57,7 @@ def outcomes_chart(df):
     # p.yaxis[0].formatter.use_scientific = False
     return p
 
-def wealth_chart(df):
+def bokeh_wealth_chart(df):
     p = (df.wealth + df.cash_flow).rename('Net wealth').plot.line(
         show_figure=False,
         toolbar_location=None,
@@ -46,7 +74,7 @@ def wealth_chart(df):
 def pygal_outcomes_chart(df):
     line_chart = pygal.Line(dynamic_print_values=True, value_formatter=lambda x: f'£{x:,.0f}')
     line_chart.title = 'Investment Outcomes:'
-    line_chart.x_labels = map(str, range(0, years+1))
+    line_chart.x_labels = map(str, range(0, len(df)))
 
     line_chart = pygal.Line(dynamic_print_values=True, value_formatter=lambda x: f'£{x:,.0f}')
     for c in df.columns:
