@@ -8,4 +8,6 @@ pandas>=0.25
 bokeh
 pandas-bokeh
 pygal
+altair
+vega
 pandas-datareader
