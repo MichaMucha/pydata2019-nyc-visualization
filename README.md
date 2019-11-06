@@ -43,6 +43,12 @@ Now on to the technical setup -
 
 ## Technical preparation
 
+### Launch Binder
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/MichaMucha/pydata2019-nyc-visualization/master)
+
+## or ..
+
 ### 1. `git clone` this repository
 
 I will be adding notebooks & other materials here before the day of the workshop, and that way you can pull the latest version.
